@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 # read video
 
@@ -12,10 +13,13 @@ while(cap.read()) :
     gray_blur = cv2.GaussianBlur(gray, (15, 15), 0)     # reduce noise
 
     thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 1)
-                                                        #adaptive threshold
+                                                        # adaptive threshold
+
+    kernel = np.ones((3, 3), np.uint8)                  # arrays
+    closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=5)   # morphology
 
     # show
-    cv2.imshow("Show", thresh)
+    cv2.imshow("Show", closing)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
