@@ -20,13 +20,17 @@ while(cap.read()):
 
     result_img = closing.copy()
     contours, hierachy = cv2.findContours(result_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    counter = 0
     for cnt in contours:
         area = cv2.contourArea(cnt)
         if area < 5000 or area > 35000:
             continue
         ellipse = cv2.fitEllipse(cnt)
         cv2.ellipse(roi, ellipse, (0, 255, 0), 4)
+        counter += 1
 
+    # show counter
+    cv2.putText(roi, str(counter), (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0), 2, cv2.LINE_AA)
     # show
     cv2.imshow("Show", roi)
 
