@@ -5,7 +5,7 @@ import numpy as np
 
 cap = cv2.VideoCapture("Coin2.mp4")                     # if open camera just index of camera
 
-while(cap.read()) :
+while(cap.read()):
     ref, frame = cap.read()
     roi = frame[:1080, 0:1920]                          # region of interest
 
@@ -16,10 +16,19 @@ while(cap.read()) :
                                                         # adaptive threshold
 
     kernel = np.ones((3, 3), np.uint8)                  # arrays
-    closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=5)   # morphology
+    closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=4)   # closing
+
+    result_img = closing.copy()
+    contours, hierachy = cv2.findContours(result_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area < 5000 or area > 35000:
+            continue
+        ellipse = cv2.fitEllipse(cnt)
+        cv2.ellipse(roi, ellipse, (0, 255, 0), 4)
 
     # show
-    cv2.imshow("Show", closing)
+    cv2.imshow("Show", roi)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
